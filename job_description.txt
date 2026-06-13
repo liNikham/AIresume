@@ -1,0 +1,15 @@
+Java Backend Developer
+
+Requirements:
+
+Java 17+
+Spring Boot
+Kafka
+Redis
+Microservices
+Hibernate
+Docker
+AWS
+CI/CD
+REST APIs
+Distributed Systems

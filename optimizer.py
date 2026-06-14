@@ -132,14 +132,16 @@ RULES
 2. Preserve EVERY span class exactly.
 3. Preserve EXACT div count.
 4. Preserve EXACT span count.
-5. Preserve approximate line lengths.
-6. Update content aggressively according to the JD.
-7. Reflect company expectations.
-8. You may change target role.
-9. You may introduce JD keywords.
-10. Return ONLY HTML.
-11. Do not add markdown.
-12. Do not add explanation.
+5. NEVER change the company name "Infosys Limited".
+6. If "Infosys Limited" appears in the HTML, it must remain exactly unchanged.
+7. Preserve approximate line lengths.
+8. Update content aggressively according to the JD.
+9. Reflect company expectations.
+10. You may change target role.
+11. You may introduce JD keywords.
+12. Return ONLY HTML.
+13. Do not add markdown.
+14. Do not add explanation.
 """
 
     return call_gemini(prompt)
@@ -167,11 +169,14 @@ RULES
 2. Keep EXACT span count.
 3. Keep ALL classes.
 4. Modify ONLY text.
-5. Keep same approximate length.
-6. Optimize for ATS.
-7. Return HTML only.
-8. Do not add markdown.
-9. Do not add explanations.
+5. NEVER change the company name "Infosys Limited".
+6. If "Infosys Limited" appears in the HTML, it must remain exactly unchanged.
+7. Preserve approximate line lengths.
+8. Keep same approximate length.
+9. Optimize for ATS.
+10. Return HTML only.
+11. Do not add markdown.
+12. Do not add explanations.
 """
 
     return call_gemini(prompt)

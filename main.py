@@ -28,8 +28,7 @@ def home():
                 name="job_description"
                 rows="20"
                 cols="100"
-                placeholder="Paste Job Description Here">
-            </textarea>
+                placeholder="Paste Job Description Here"></textarea>
 
             <br><br>
 
@@ -50,33 +49,64 @@ def generate_resume(
         job_description: str = Form(...)
 ):
 
-    with open(
-            "resumes/master_resume.html",
-            encoding="utf-8"
-    ) as f:
+    try:
 
-        html = f.read()
+        print("=" * 50)
+        print("STEP 1 - Request received")
+        print("=" * 50)
 
-    updated_html = optimize_resume(
-        html,
-        job_description
-    )
+        print(
+            f"JD Length: {len(job_description)}"
+        )
 
-    with open(
+        with open(
+                "resumes/master_resume.html",
+                encoding="utf-8"
+        ) as f:
+
+            html = f.read()
+
+        print("STEP 2 - Resume loaded")
+
+        updated_html = optimize_resume(
+            html,
+            job_description
+        )
+
+        print("STEP 3 - Optimization finished")
+
+        with open(
+                "generated/updated_resume.html",
+                "w",
+                encoding="utf-8"
+        ) as f:
+
+            f.write(updated_html)
+
+        print("STEP 4 - HTML saved")
+
+        html_to_pdf(
             "generated/updated_resume.html",
-            "w",
-            encoding="utf-8"
-    ) as f:
+            "generated/updated_resume.pdf"
+        )
 
-        f.write(updated_html)
+        print("STEP 5 - PDF generated")
 
-    html_to_pdf(
-        "generated/updated_resume.html",
-        "generated/updated_resume.pdf"
-    )
+        return FileResponse(
+            "generated/updated_resume.pdf",
+            media_type="application/pdf",
+            filename="resume.pdf"
+        )
 
-    return FileResponse(
-        "generated/updated_resume.pdf",
-        media_type="application/pdf",
-        filename="resume.pdf"
-    )
+    except Exception as e:
+
+        print("=" * 50)
+        print("ERROR OCCURRED")
+        print("=" * 50)
+
+        print(str(e))
+
+        return {
+            "success": False,
+            "error": str(e)
+        }

@@ -39,3 +39,11 @@ with open(
 print(
     "generated/updated_resume.html created"
 )
+from pdf_generator import (
+    html_to_pdf
+)
+
+html_to_pdf(
+    "generated/updated_resume.html",
+    "generated/updated_resume.pdf"
+)

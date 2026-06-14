@@ -148,6 +148,7 @@ RULES
 def optimize_bullet(
         bullet_html,
         jd):
+    print(jd)
 
     prompt = f"""
 You are a resume optimization engine.

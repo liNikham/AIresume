@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
 
 from resume_optimizer import optimize_resume
 from pdf_generator import html_to_pdf
@@ -8,13 +8,47 @@ from pdf_generator import html_to_pdf
 app = FastAPI()
 
 
-class ResumeRequest(BaseModel):
-    job_description: str
+@app.get("/", response_class=HTMLResponse)
+def home():
+
+    return """
+    <html>
+
+    <head>
+        <title>Resume AI</title>
+    </head>
+
+    <body>
+
+        <h2>AI Resume Optimizer</h2>
+
+        <form action="/generate" method="post">
+
+            <textarea
+                name="job_description"
+                rows="20"
+                cols="100"
+                placeholder="Paste Job Description Here">
+            </textarea>
+
+            <br><br>
+
+            <button type="submit">
+                Generate Resume
+            </button>
+
+        </form>
+
+    </body>
+
+    </html>
+    """
 
 
 @app.post("/generate")
 def generate_resume(
-        request: ResumeRequest):
+        job_description: str = Form(...)
+):
 
     with open(
             "resumes/master_resume.html",
@@ -25,7 +59,7 @@ def generate_resume(
 
     updated_html = optimize_resume(
         html,
-        request.job_description
+        job_description
     )
 
     with open(

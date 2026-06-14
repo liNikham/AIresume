@@ -9,4 +9,4 @@ google-generativeai
 beautifulsoup4
 lxml
 
-playwright
+weasyprint

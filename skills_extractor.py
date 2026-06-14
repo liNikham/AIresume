@@ -27,6 +27,9 @@ def extract_skills(html):
 
             continue
 
+        if text == "Achievements":
+            break
+
         if inside:
 
             skills.append(

@@ -1,15 +1,19 @@
-Java Backend Developer
+We are looking for a highly skilled MERN Stack Developer with 8+ years of experience in designing and developing scalable web applications using MongoDB, Express.js, React.js, and Node.js. The candidate will be responsible for end-to-end application development, API integration, performance optimization, and delivering high-quality solutions in a fast-paced environment.
 
-Requirements:
+Key Responsibilities
+• Design, develop, and maintain robust full-stack web applications using the MERN stack.
+• Build reusable and responsive UI components using React.js.
+• Develop RESTful APIs and backend services using Node.js and Express.js.
+• Design and manage MongoDB databases with optimized queries and schemas.
+• Collaborate with cross-functional teams to understand business requirements and deliver technical solutions.
+• Ensure application performance, scalability, security, and code quality.
+• Participate in code reviews, troubleshooting, debugging, and production support.
+• Mentor junior developers and contribute to technical discussions and architecture decisions.
 
-Java 17+
-Spring Boot
-Kafka
-Redis
-Microservices
-Hibernate
-Docker
-AWS
-CI/CD
-REST APIs
-Distributed Systems
+Required Skills
+• Strong hands-on experience in MongoDB, Express.js, React.js, and Node.js.
+• Expertise in JavaScript, TypeScript, HTML5, CSS3, and REST APIs.
+• Experience with Microservices architecture and third-party API integrations.
+• Knowledge of cloud platforms such as AWS/Azure/GCP.
+• Experience with Git, CI/CD pipelines, Docker, and deployment processes.
+• Strong problem-solving and communication skills.

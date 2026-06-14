@@ -1,43 +1,9 @@
-About this role
-Zenskar is building the operational backbone for how B2B companies run their business. As a DevOps Engineer, you will own the infrastructure that everything else runs on — and at a scaling SaaS company, that matters a lot. When infra is broken, nothing ships. When it's well-built, the rest of the team barely thinks about it. That's the bar.
-
-This is not a ticket-queue role. You will not be a service desk for developers. You will design, build, and evolve the platform that keeps Zenskar's systems reliable, fast, and secure — and you'll do it with a software engineer's mindset, not an IT admin's.
-
-Design and own cloud infrastructure end-to-end — from architecture decisions to production operations
-Build and maintain CI/CD pipelines that make shipping safe, fast, and boring (boring is good)
-Own the observability stack — make sure we know when something breaks before a customer does
-Drive infrastructure cost optimisation without compromising reliability or developer experience
-Work closely with backend engineers to make deployments, rollbacks, and incident response feel effortless
-Identify, document, and eliminate toil — if you're doing something manually more than twice, automate it
-Embed security and compliance thinking into infrastructure by default — not as a retrofit
-Be the person who asks "what happens when this fails?" before anyone else does
-THE IMPACT YOU'LL MAKE
-Your infrastructure decisions will determine how reliably Zenskar's enterprise clients can run their business on our platform — downtime or data issues at this layer have direct consequences
-You will build the foundation that lets the engineering team ship faster without breaking things
-Your automation and tooling will compound over time — good work here multiplies everyone else's output
-You will be the person who turns "the infra is always on fire" into "infra just works" — and that shift has a real, visible impact on the company's velocity
-Key qualifications
-Must have:
-4+ years of hands-on DevOps, SRE, or Platform Engineering experience at a product company
-Strong Kubernetes experience in production — if you've debugged a CrashLoopBackOff at 2am and lived to tell the tale, you're in the right place
-Infrastructure-as-Code with Terraform — not just familiarity, but the ability to write, review, and refactor production-grade Terraform without hand-holding
-Deep AWS experience — ECS/EKS, Lambda, CloudWatch, IAM, VPC, and enough Cost Explorer to know where money goes when bills spike
-CI/CD ownership — you've built pipelines, not just used them; GitHub Actions, GitLab CI, or equivalent at real scale
-Can describe the hard infra problems you've solved, why they were hard, and what changed as a result — not just a list of tools on a resume
-Hands-on AWS ECS experience in production — task definitions, service scaling, capacity providers, deployment strategies, and circuit breakers; not just EC2 or generic container orchestration
-Lambda operations at scale — function lifecycle management, event source mapping, cold start tuning, and migrating Lambda-based workloads to more appropriate compute patterns as systems mature
-End-to-end observability ownership — alerting pipelines, custom metrics, structured log ingestion, and actually diagnosing production issues with the stack; not just setting up dashboards
-Secrets and credentials management in AWS — rotation policies, least-privilege access patterns, and the security hygiene that keeps them clean over time
-Good to have:
-Scripting ability in Python or Go for automation and internal tooling — the kind of thing that saves a team hours every week
-Observability stack hands-on — Prometheus, Grafana, VictoriaMetrics, or Datadog in production; comfortable diagnosing issues across services, not just building dashboards
-Kustomize experience alongside Terraform for Kubernetes configuration management
-Apache Airflow or similar data pipeline infrastructure
-Security and compliance awareness — understands what SOC 2 means at the infra layer, not just on paper
-Cost optimisation wins you can point to — concrete numbers, concrete impact
-Experience building or maintaining an Internal Developer Portal (Backstage or similar)
-B2B SaaS or fintech background — multi-tenant systems, external integrations, enterprise reliability expectations
-Early-stage startup experience — comfortable when the runbook doesn't exist yet because you're writing it
-Self-hosted identity infrastructure (Keycloak, Okta, Auth0, or equivalent) — operational experience, not just integration
-Metrics-based autoscaling for worker fleets — scaling on queue depth or custom application metrics, not just CPU/memory
-Not taking yourself too seriously :)
+Job Description
+Develop and maintain full stack applications using Angular, .NET Core/Web API, and SQL Server
+Migrate existing front-end applications from ASP .NET to Angular 10+
+Prepare and maintain technical documentation for developed features and system architecture
+Perform peer code reviews to ensure code quality and adherence to development standards
+Deploy applications and provide UAT support, ensuring a smooth transition to production
+Manage additional responsibilities including bug fixing, L3 support, and system enhancements
+Collaborate with cross-functional teams to deliver high-quality software solutions
+Optional but preferred: exposure to transaction banking domain

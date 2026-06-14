@@ -172,7 +172,7 @@ RULES
 5. NEVER change the company name "Infosys Limited".
 6. If "Infosys Limited" appears in the HTML, it must remain exactly unchanged.
 7. Preserve approximate line lengths.
-8. Keep same approximate length.
+8. Output must fit within the same visual width as the original PDF.
 9. Optimize for ATS.
 10. Return HTML only.
 11. Do not add markdown.

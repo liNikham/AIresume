@@ -3,38 +3,47 @@ import requests
 
 
 def html_to_pdf(html_file: str, output_pdf: str) -> None:
-    """Converts a local pdf2htmlEX HTML file to PDF using PDFShift's official v3 structure."""
-    # 1. Retrieve your API key from environment variables
-    api_key = os.environ.get("PDFSHIFT_API_KEY")
+    """
+    Converts a local HTML file to PDF using Browserless PDF API.
+    """
 
-    if not api_key:
+    token = os.environ.get("BROWSERLESS_TOKEN")
+
+    if not token:
         raise ValueError(
-            "Missing PDFSHIFT_API_KEY environment variable. Please set it."
+            "Missing BROWSERLESS_TOKEN environment variable."
         )
 
-    # 2. Read your local heavy resume HTML file contents as a text string
     with open(html_file, "r", encoding="utf-8") as f:
         html_content = f.read()
 
-    print(f"Sending heavy pdf2htmlEX file ({html_file}) to PDFShift API...")
+    print(f"Sending {html_file} to Browserless...")
 
-    # 3. Match the official documentation structure exactly
-    # We replace the URL string with your raw html_content string
     response = requests.post(
-        "https://api.pdfshift.io/v3/convert/pdf",
-        headers={"X-API-Key": api_key},
-        json={
-            "source": html_content,  # Passing the file text directly here
-            "landscape": False,
-            "use_print": False,
+        f"https://production-sfo.browserless.io/pdf?token={token}",
+        headers={
+            "Content-Type": "application/json"
         },
+        json={
+            "html": html_content,
+            "options": {
+                "format": "A4",
+                "printBackground": True,
+                "preferCSSPageSize": True,
+                "margin": {
+                    "top": "0mm",
+                    "right": "0mm",
+                    "bottom": "0mm",
+                    "left": "0mm"
+                }
+            }
+        },
+        timeout=120,
     )
 
-    # 4. Built-in error handling from the documentation snippet
     response.raise_for_status()
 
-    # 5. Save the generated binary content to your destination path
     with open(output_pdf, "wb") as f:
         f.write(response.content)
 
-    print(f"Successfully generated pixel-perfect PDF: {output_pdf}")
+    print(f"Successfully generated PDF: {output_pdf}")

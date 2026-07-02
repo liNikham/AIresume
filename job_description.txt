@@ -1,9 +1,22 @@
-Job Description
-Develop and maintain full stack applications using Angular, .NET Core/Web API, and SQL Server
-Migrate existing front-end applications from ASP .NET to Angular 10+
-Prepare and maintain technical documentation for developed features and system architecture
-Perform peer code reviews to ensure code quality and adherence to development standards
-Deploy applications and provide UAT support, ensuring a smooth transition to production
-Manage additional responsibilities including bug fixing, L3 support, and system enhancements
-Collaborate with cross-functional teams to deliver high-quality software solutions
-Optional but preferred: exposure to transaction banking domain
+Role: Software Engineer - Backend & AI
+
+Experience: 4+ Years
+
+Role Summary
+
+The Software Engineer (Backend & AI) builds and maintains the API and integration layer of the AI CoE. This includes REST APIs that expose AI capabilities, tool backends that AI agents call, database schemas, and integrations with enterprise systems. The role requires backend engineering skills plus working ability to consume and integrate LLM APIs.
+
+Responsibilities
+• Build FastAPI microservices that expose RAG, agent and ML capabilities as REST endpoints
+• Build tool APIs used by AI agents — functions that search, retrieve, create, update or integrate with external systems
+• Integrate with enterprise systems — SharePoint, document management systems, ERP, databases
+• Design and manage database schemas (PostgreSQL, MongoDB) for AI product features
+• Implement authentication and authorisation for AI services
+• Handle async patterns — background tasks, queuing, high-throughput API serving
+
+Required Skills
+• Python — production-quality. Code is structured, tested, handles exceptions.
+• FastAPI — has built and shipped REST APIs. Understands request lifecycle, validation, middleware, error responses.
+• SQL — writes complex queries confidently. Understands indexing, transactions, query performance.
+• Git and Docker — standard workflow, containerised services.
+• LLM API consumption — can call OpenAI or Anthropic APIs, handle streaming and manage token limits. Does not need to design AI systems, needs to integrate them.• LLM API consumption, can call OpenAI or Anthropic APIs, handle streaming, and manage token limits. No need to design AI systems; just integrate them.

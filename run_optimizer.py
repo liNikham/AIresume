@@ -1,6 +1,15 @@
 from resume_optimizer import (
     optimize_resume
 )
+from body_extractor import (
+    extract_body
+)
+
+from body_replacer import (
+    replace_body
+)
+
+
 
 with open(
     "resumes/master_resume.html",
@@ -13,10 +22,16 @@ jd = open(
     "job_description.txt",
     encoding="utf-8"
 ).read()
-
-updated_html = optimize_resume(
-    html,
+body = extract_body(html)
+updated_body = optimize_resume(
+    body,
     jd
+)
+
+updated_html = replace_body(
+    html,
+    body,
+    updated_body
 )
 
 with open(

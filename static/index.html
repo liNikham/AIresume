@@ -1,48 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <title>Resume AI</title>
-
-    <link rel="stylesheet" href="/static/style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume AI — ATS Optimization Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
 
+<div class="scan-grid" aria-hidden="true"></div>
+
 <div class="container">
+  <div class="card">
 
-    <div class="card">
+    <div class="corner corner-tl" aria-hidden="true"></div>
+    <div class="corner corner-tr" aria-hidden="true"></div>
+    <div class="corner corner-bl" aria-hidden="true"></div>
+    <div class="corner corner-br" aria-hidden="true"></div>
 
-        <h1>Resume AI</h1>
+    <header class="card-header">
+      <p class="eyebrow"><span class="dot"></span>ATS OPTIMIZATION ENGINE</p>
+      <h1>Resume <span class="accent">AI</span></h1>
+      <p class="subtitle">Paste a job description. Get a resume tuned to pass the parser and land on a recruiter's desk.</p>
+    </header>
 
-        <p>
-            Generate an ATS-optimized resume tailored to any Job Description.
-        </p>
+    <form action="/generate" method="post" id="resume-form">
 
-        <form action="/generate" method="post">
+      <div class="field">
+        <div class="field-label-row">
+          <label for="job_description">Job description</label>
+          <span class="char-count" id="char-count">0 characters</span>
+        </div>
 
-            <textarea
-                name="job_description"
-                placeholder="Paste the Job Description here..."
-                required
-            ></textarea>
+        <div class="scan-bed">
+          <textarea
+            id="job_description"
+            name="job_description"
+            placeholder="Paste the full job description here — responsibilities, requirements, keywords. The more context, the sharper the match."
+            required
+          ></textarea>
+          <div class="scan-line" aria-hidden="true"></div>
+        </div>
+      </div>
 
-            <button type="submit">
+      <button type="submit" id="generate-btn">
+        <span class="btn-label">Generate Resume</span>
+        <span class="btn-icon" aria-hidden="true">→</span>
+      </button>
 
-                🚀 Generate Resume
+      <div class="feature-row">
+        <span class="chip"><span class="chip-dot chip-dot--mint"></span>Keyword matched</span>
+        <span class="chip"><span class="chip-dot chip-dot--indigo"></span>ATS-safe formatting</span>
+        <span class="chip"><span class="chip-dot chip-dot--amber"></span>Ready in seconds</span>
+      </div>
 
-            </button>
+    </form>
 
-        </form>
+  </div>
 
-    </div>
-
+  <p class="footnote">Nothing leaves this page until you hit generate.</p>
 </div>
 
-</body>
+<script>
+  const textarea = document.getElementById('job_description');
+  const charCount = document.getElementById('char-count');
+  const form = document.getElementById('resume-form');
+  const btn = document.getElementById('generate-btn');
 
+  textarea.addEventListener('input', () => {
+    const n = textarea.value.length;
+    charCount.textContent = n === 1 ? '1 character' : n.toLocaleString() + ' characters';
+  });
+
+  form.addEventListener('submit', () => {
+    btn.classList.add('is-loading');
+    btn.querySelector('.btn-label').textContent = 'Scanning job description…';
+    btn.disabled = true;
+  });
+</script>
+
+</body>
 </html>

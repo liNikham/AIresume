@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Resume AI</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Resume AI</h1>
+
+        <p>
+            Generate an ATS-optimized resume tailored to any Job Description.
+        </p>
+
+        <form action="/generate" method="post">
+
+            <textarea
+                name="job_description"
+                placeholder="Paste the Job Description here..."
+                required
+            ></textarea>
+
+            <button type="submit">
+
+                🚀 Generate Resume
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,110 +1,91 @@
 from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from resume_optimizer import optimize_resume
+from body_extractor import extract_body
+from body_replacer import replace_body
 from pdf_generator import html_to_pdf
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
 def home():
 
-    return """
-    <html>
-
-    <head>
-        <title>Resume AI</title>
-    </head>
-
-    <body>
-
-        <h2>AI Resume Optimizer</h2>
-
-        <form action="/generate" method="post">
-
-            <textarea
-                name="job_description"
-                rows="20"
-                cols="100"
-                placeholder="Paste Job Description Here"></textarea>
-
-            <br><br>
-
-            <button type="submit">
-                Generate Resume
-            </button>
-
-        </form>
-
-    </body>
-
-    </html>
-    """
+    with open("static/index.html", encoding="utf-8") as f:
+        return f.read()
 
 
 @app.post("/generate")
-def generate_resume(
-        job_description: str = Form(...)
-):
+def generate_resume(job_description: str = Form(...)):
 
     try:
 
-        print("=" * 50)
-        print("STEP 1 - Request received")
-        print("=" * 50)
-
-        print(
-            f"JD Length: {len(job_description)}"
-        )
+        print("=" * 60)
+        print("STEP 1 - Request Received")
+        print("=" * 60)
 
         with open(
-                "resumes/master_resume.html",
-                encoding="utf-8"
+            "resumes/master_resume.html",
+            encoding="utf-8"
         ) as f:
-
             html = f.read()
 
-        print("STEP 2 - Resume loaded")
+        print("✓ Master resume loaded")
 
-        updated_html = optimize_resume(
-            html,
+        body = extract_body(html)
+
+        print("✓ Body extracted")
+
+        updated_body = optimize_resume(
+            body,
             job_description
         )
 
-        print("STEP 3 - Optimization finished")
+        print("✓ Resume optimized")
 
-        with open(
-                "generated/updated_resume.html",
-                "w",
-                encoding="utf-8"
-        ) as f:
-
-            f.write(updated_html)
-
-        print("STEP 4 - HTML saved")
-
-        html_to_pdf(
-            "generated/updated_resume.html",
-            "generated/updated_resume.pdf"
+        updated_html = replace_body(
+            html,
+            body,
+            updated_body
         )
 
-        print("STEP 5 - PDF generated")
+        print("✓ HTML reconstructed")
+
+        output_html = "generated/updated_resume.html"
+        output_pdf = "generated/updated_resume.pdf"
+
+        with open(
+            output_html,
+            "w",
+            encoding="utf-8"
+        ) as f:
+            f.write(updated_html)
+
+        print("✓ HTML saved")
+
+        html_to_pdf(
+            output_html,
+            output_pdf
+        )
+
+        print("✓ PDF generated")
 
         return FileResponse(
-            "generated/updated_resume.pdf",
+            output_pdf,
             media_type="application/pdf",
-            filename="resume.pdf"
+            filename="Nikhil_Mahadik_Resume.pdf",
         )
 
     except Exception as e:
 
-        print("=" * 50)
-        print("ERROR OCCURRED")
-        print("=" * 50)
-
-        print(str(e))
+        print("=" * 60)
+        print("ERROR")
+        print("=" * 60)
+        print(e)
 
         return {
             "success": False,

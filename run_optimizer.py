@@ -8,7 +8,9 @@ from body_extractor import (
 from body_replacer import (
     replace_body
 )
-
+from link_fixer import (
+    fix_pdf_links
+)
 
 
 with open(
@@ -60,5 +62,10 @@ from pdf_generator import (
 
 html_to_pdf(
     "generated/updated_resume.html",
+    "generated/updated_resume.pdf"
+)
+
+fix_pdf_links(
+   "generated/updated_resume.html",
     "generated/updated_resume.pdf"
 )

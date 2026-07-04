@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-
+from link_fixer import fix_pdf_links
 from resume_optimizer import optimize_resume
 from body_extractor import extract_body
 from body_replacer import replace_body
@@ -71,6 +71,10 @@ def generate_resume(job_description: str = Form(...)):
             output_html,
             output_pdf
         )
+        fix_pdf_links(
+            "generated/updated_resume.html",
+                "generated/updated_resume.pdf"
+            )
 
         print("✓ PDF generated")
 

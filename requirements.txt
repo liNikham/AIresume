@@ -11,3 +11,4 @@ lxml
 
 weasyprint
 requests
+pymupdf

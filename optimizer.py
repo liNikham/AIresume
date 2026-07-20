@@ -108,16 +108,14 @@ def call_gemini(prompt):
 
 
 def call_gemini_batch(prompt):
-
+    print("Calling Gemini API in batch mode...", flush=True)
     while True:
-
         try:
-
             response = model.generate_content(
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-
+            print("Gemini API response received successfully.", flush=True)
             raw_text = response.text.strip()
 
             if raw_text.startswith("```json"):
@@ -136,7 +134,8 @@ def call_gemini_batch(prompt):
             error_text = str(e)
 
             print(
-                "\nQuota exceeded."
+                "\nQuota exceeded during batch call.",
+                flush=True
             )
 
             match = re.search(
@@ -153,14 +152,15 @@ def call_gemini_batch(prompt):
                 ) + 2
 
             print(
-                f"Waiting {wait_seconds} seconds..."
+                f"Waiting {wait_seconds} seconds...",
+                flush=True
             )
 
             time.sleep(wait_seconds)
 
-        except json.JSONDecodeError as err:
-            print(f"Failed to parse JSON response: {err}")
-            return {}
+        except Exception as e:
+            print(f"Unexpected error in call_gemini_batch: {e}", flush=True)
+            raise e
 
 
 def optimize_section(
@@ -276,6 +276,7 @@ RULES:
      "project_bullets": ["<updated proj bullet 1>", "<updated proj bullet 2>", ...]
    }}
 7. Do not include extra text or explanations outside the JSON object.
+8. CRITICAL: The returned list "experience_bullets" MUST contain EXACTLY {len(exp_bullets_html)} elements. The returned list "project_bullets" MUST contain EXACTLY {len(proj_bullets_html)} elements. Each element in these lists must correspond exactly to the input element at the same index, maintaining its HTML tags and structure.
 """
 
     return call_gemini_batch(prompt)

@@ -26,12 +26,12 @@ def validate_fragment(
     #     return False, "Span mismatch"
 
     old_classes = [
-        d.get("class")
+        set(d.get("class") or [])
         for d in old.find_all("div")
     ]
 
     new_classes = [
-        d.get("class")
+        set(d.get("class") or [])
         for d in new.find_all("div")
     ]
 

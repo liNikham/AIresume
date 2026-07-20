@@ -298,10 +298,10 @@
       markAllStepsComplete();
 
       if (payload.download_url) {
-        downloadBtn.href = payload.download_url;
+        downloadBtn.href = payload.download_url + '?t=' + Date.now();
       }
       if (payload.preview_url) {
-        previewBtn.href = payload.preview_url;
+        previewBtn.href = payload.preview_url + '?t=' + Date.now();
       }
 
       setTimeout(() => {

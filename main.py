@@ -24,10 +24,16 @@ def home():
 
 @app.get("/download")
 def download_pdf():
+    headers = {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    }
     return FileResponse(
         "generated/updated_resume.pdf",
         media_type="application/pdf",
-        filename="Nikhil_Mahadik_Resume.pdf"
+        filename="Nikhil_Mahadik_Resume.pdf",
+        headers=headers
     )
 
 
@@ -195,10 +201,16 @@ def generate_resume(job_description: str = Form(...)):
 
         print("✓ PDF generated")
 
+        headers = {
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
         return FileResponse(
             output_pdf,
             media_type="application/pdf",
             filename="Nikhil_Mahadik_Resume.pdf",
+            headers=headers
         )
 
     except Exception as e:

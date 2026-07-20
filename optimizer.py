@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import json
 
 import google.generativeai as genai
 
@@ -106,6 +107,62 @@ def call_gemini(prompt):
             time.sleep(wait_seconds)
 
 
+def call_gemini_batch(prompt):
+
+    while True:
+
+        try:
+
+            response = model.generate_content(
+                prompt,
+                generation_config={"response_mime_type": "application/json"}
+            )
+
+            raw_text = response.text.strip()
+
+            if raw_text.startswith("```json"):
+                raw_text = raw_text[7:]
+            elif raw_text.startswith("```"):
+                raw_text = raw_text[3:]
+            if raw_text.endswith("```"):
+                raw_text = raw_text[:-3]
+
+            raw_text = raw_text.strip()
+
+            return json.loads(raw_text)
+
+        except ResourceExhausted as e:
+
+            error_text = str(e)
+
+            print(
+                "\nQuota exceeded."
+            )
+
+            match = re.search(
+                r"retry in ([0-9]+)",
+                error_text,
+                re.IGNORECASE
+            )
+
+            wait_seconds = 60
+
+            if match:
+                wait_seconds = int(
+                    match.group(1)
+                ) + 2
+
+            print(
+                f"Waiting {wait_seconds} seconds..."
+            )
+
+            time.sleep(wait_seconds)
+
+        except json.JSONDecodeError as err:
+            print(f"Failed to parse JSON response: {err}")
+            return {}
+
+
 def optimize_section(
         section_name,
         fragment,
@@ -180,3 +237,45 @@ RULES
 """
 
     return call_gemini(prompt)
+
+
+def optimize_resume_batch(
+        objective_html,
+        skills_html,
+        exp_bullets_html,
+        proj_bullets_html,
+        jd):
+
+    payload = {
+        "objective": objective_html,
+        "skills": skills_html,
+        "experience_bullets": exp_bullets_html,
+        "project_bullets": proj_bullets_html
+    }
+
+    prompt = f"""
+You are an expert ATS resume optimization engine.
+
+JOB DESCRIPTION:
+{jd}
+
+INPUT RESUME HTML SECTIONS (JSON):
+{json.dumps(payload, indent=2)}
+
+RULES:
+1. Preserve EXACT div count and span count for EVERY section and bullet.
+2. Keep ALL HTML element classes, inline styles, IDs, and structural tags EXACTLY as provided.
+3. NEVER change the company name "Infosys Limited" if present in the HTML.
+4. Update text aggressively to align with the target role and incorporate relevant ATS keywords from the JD.
+5. Preserve approximate line lengths and visual fit.
+6. Return a valid JSON object matching the exact key structure of the input:
+   {{
+     "objective": "<updated objective html>",
+     "skills": "<updated skills html>",
+     "experience_bullets": ["<updated exp bullet 1>", "<updated exp bullet 2>", ...],
+     "project_bullets": ["<updated proj bullet 1>", "<updated proj bullet 2>", ...]
+   }}
+7. Do not include extra text or explanations outside the JSON object.
+"""
+
+    return call_gemini_batch(prompt)

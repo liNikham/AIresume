@@ -16,8 +16,7 @@ from dom_replacer import (
 )
 
 from optimizer import (
-    optimize_bullet,
-    optimize_section
+    optimize_resume_batch
 )
 
 from validator import (
@@ -37,218 +36,69 @@ def optimize_resume(
             except Exception as err:
                 print(f"Progress callback error: {err}")
 
-    emit("objective", 15, "Optimizing Career Objective...")
+    emit("objective", 15, "Extracting resume structure...")
 
+    objective = extract_objective(html)
+    objective_html = "\n".join(objective)
 
-    print("\n====================")
-    print("OBJECTIVE")
-    print("====================")
+    skills = extract_skills(html)
+    skills_html = "\n".join(skills)
 
-    objective = extract_objective(
-        html
-    )
+    exp_bullets = extract_experience_bullets(html)
+    exp_bullet_strings = ["\n".join(b) for b in exp_bullets]
 
-    objective_html = "\n".join(
-        objective
-    )
+    proj_bullets = extract_project_bullets(html)
+    proj_bullet_strings = ["\n".join(b) for b in proj_bullets]
 
-    updated_objective = optimize_section(
-        "Objective",
+    emit("skills", 30, "Optimizing all resume sections in batch mode...")
+
+    batch_result = optimize_resume_batch(
         objective_html,
+        skills_html,
+        exp_bullet_strings,
+        proj_bullet_strings,
         jd
     )
 
-    valid, reason = validate_fragment(
-        objective_html,
-        updated_objective
-    )
+    emit("experience", 65, "Validating & applying Career Objective and Skills...")
 
-    print(
-        f"Objective: {reason}"
-    )
-
-    if valid:
-
-        print(
-            "Replacing Objective"
-        )
-
-        html = replace_bullet_by_classes(
-            html,
-            objective_html,
-            updated_objective
-        )
-
-    else:
-
-        print(
-            "Skipping Objective"
-        )
-
-    emit("skills", 35, "Aligning Skills & ATS Keywords...")
-
-    print("\n====================")
-    print("SKILLS")
-    print("====================")
-
-    skills = extract_skills(
-        html
-    )
-
-    skills_html = "\n".join(
-        skills
-    )
-
-    updated_skills = optimize_section(
-        "Skills",
-        skills_html,
-        jd
-    )
-
-    valid, reason = validate_fragment(
-        skills_html,
-        updated_skills
-    )
-
-    print(
-        f"Skills: {reason}"
-    )
-
-    if valid:
-
-        print(
-            "Replacing Skills"
-        )
-
-        html = replace_bullet_by_classes(
-            html,
-            skills_html,
-            updated_skills
-        )
-
-    else:
-
-        print(
-            "Skipping Skills"
-        )
-
-    experience = extract_experience_bullets(
-        html
-    )
-
-    print("\n====================")
-    print("EXPERIENCE")
-    print("====================")
-
-    total_exp = len(experience) if len(experience) > 0 else 1
-
-    for idx, bullet in enumerate(
-            experience):
-
-        prog = 35 + int(((idx + 1) / total_exp) * 30)
-        emit("experience", prog, f"Tuning Experience Bullet {idx+1}/{total_exp}...")
-
-        print(
-            f"Optimizing Experience Bullet {idx+1}"
-        )
-
-        original = "\n".join(
-            bullet
-        )
-
-        updated = optimize_bullet(
-            original,
-            jd
-        )
-
-        valid, reason = validate_fragment(
-            original,
-            updated
-        )
-
-        print(
-            f"Validation: {reason}"
-        )
-
+    # Objective
+    updated_obj = batch_result.get("objective", "")
+    if updated_obj:
+        valid, reason = validate_fragment(objective_html, updated_obj)
+        print(f"Objective validation: {reason}")
         if valid:
+            html = replace_bullet_by_classes(html, objective_html, updated_obj)
 
-            print(
-                f"Replacing Experience Bullet {idx+1}"
-            )
-
-            html = replace_bullet_by_classes(
-                html,
-                original,
-                updated
-            )
-
-        else:
-
-            print(
-                f"Skipping Experience Bullet {idx+1}"
-            )
-
-    projects = extract_project_bullets(
-        html
-    )
-
-    print("\n====================")
-    print("PROJECTS")
-    print("====================")
-
-    total_proj = len(projects) if len(projects) > 0 else 1
-
-    for idx, bullet in enumerate(
-            projects):
-
-        prog = 65 + int(((idx + 1) / total_proj) * 25)
-        emit("projects", prog, f"Refining Project Bullet {idx+1}/{total_proj}...")
-
-        print(
-            f"Optimizing Project Bullet {idx+1}"
-        )
-
-        original = "\n".join(
-            bullet
-        )
-
-        updated = optimize_bullet(
-            original,
-            jd
-        )
-
-        valid, reason = validate_fragment(
-            original,
-            updated
-        )
-
-        print(
-            f"Validation: {reason}"
-        )
-
+    # Skills
+    updated_skills = batch_result.get("skills", "")
+    if updated_skills:
+        valid, reason = validate_fragment(skills_html, updated_skills)
+        print(f"Skills validation: {reason}")
         if valid:
+            html = replace_bullet_by_classes(html, skills_html, updated_skills)
 
-            print(
-                f"Replacing Project Bullet {idx+1}"
-            )
+    # Experience Bullets
+    updated_exp = batch_result.get("experience_bullets", [])
+    emit("experience", 78, f"Validating {len(exp_bullet_strings)} Experience Bullets...")
+    for idx, original in enumerate(exp_bullet_strings):
+        if idx < len(updated_exp):
+            updated = updated_exp[idx]
+            valid, reason = validate_fragment(original, updated)
+            print(f"Exp Bullet {idx+1} validation: {reason}")
+            if valid:
+                html = replace_bullet_by_classes(html, original, updated)
 
-            html = replace_bullet_by_classes(
-                html,
-                original,
-                updated
-            )
-
-        else:
-
-            print(
-                f"Skipping Project Bullet {idx+1}"
-            )
-
-            print("\nORIGINAL\n")
-            print(original)
-
-            print("\nGENERATED\n")
-            print(updated)
+    # Project Bullets
+    updated_proj = batch_result.get("project_bullets", [])
+    emit("projects", 85, f"Validating {len(proj_bullet_strings)} Project Bullets...")
+    for idx, original in enumerate(proj_bullet_strings):
+        if idx < len(updated_proj):
+            updated = updated_proj[idx]
+            valid, reason = validate_fragment(original, updated)
+            print(f"Proj Bullet {idx+1} validation: {reason}")
+            if valid:
+                html = replace_bullet_by_classes(html, original, updated)
 
     emit("assembly", 90, "Reconstructing HTML structure...")
-    return html
+    return html

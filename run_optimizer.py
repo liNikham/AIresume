@@ -25,10 +25,13 @@ jd = open(
     encoding="utf-8"
 ).read()
 body = extract_body(html)
-updated_body = optimize_resume(
+opt_result = optimize_resume(
     body,
     jd
 )
+updated_body = opt_result.get("html", "") if isinstance(opt_result, dict) else opt_result
+if isinstance(opt_result, dict):
+    print(f"Final ATS Score: {opt_result.get('ats_score')}/100 in {opt_result.get('iterations')} passes")
 
 updated_html = replace_body(
     html,

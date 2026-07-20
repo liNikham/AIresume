@@ -581,6 +581,142 @@ textarea::placeholder {
 }
 
 /* ============================================
+   ATS Score Display Card
+   ============================================ */
+.ats-score-card {
+  width: 100%;
+  background: rgba(10, 13, 20, 0.6);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 10px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.score-header-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.1));
+  border: 2px solid var(--accent-mint);
+  box-shadow: 0 0 20px var(--accent-mint-glow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-mint);
+  line-height: 1;
+}
+
+.score-max {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.score-title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.score-card-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.score-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.score-status-pill .pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.pill-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-mint);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.pill-success .pill-dot {
+  background: var(--accent-mint);
+  box-shadow: 0 0 8px var(--accent-mint-glow);
+}
+
+.pill-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.pill-warning .pill-dot {
+  background: var(--accent-amber);
+}
+
+.score-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+}
+
+.meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.meta-val {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.text-mint {
+  color: var(--accent-mint);
+}
+
+
+/* ============================================
    Error State
    ============================================ */
 .error-card {

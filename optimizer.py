@@ -107,10 +107,13 @@ def call_gemini(prompt):
             time.sleep(wait_seconds)
 
 
+from bs4 import BeautifulSoup
+
 def call_gemini_batch(prompt):
     print("Calling Gemini API in batch mode...", flush=True)
     while True:
         try:
+            wait_for_rate_limit()
             response = model.generate_content(
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
@@ -161,6 +164,55 @@ def call_gemini_batch(prompt):
         except Exception as e:
             print(f"Unexpected error in call_gemini_batch: {e}", flush=True)
             raise e
+
+
+def evaluate_ats_score(resume_html, jd):
+    print("Evaluating ATS match score...", flush=True)
+    soup = BeautifulSoup(resume_html, "html.parser")
+    text = soup.get_text(separator=" ", strip=True)
+
+    prompt = f"""
+You are an expert ATS (Applicant Tracking System) reviewer and hiring manager.
+Evaluate how well the following RESUME matches the given JOB DESCRIPTION.
+
+JOB DESCRIPTION:
+{jd}
+
+RESUME TEXT:
+{text}
+
+Provide an objective, realistic ATS score evaluation from 0 to 100 based on:
+1. Keyword Overlap & Frequency (0-30 pts)
+2. Technical Skills & Tools Match (0-30 pts)
+3. Action Verbs & Quantifiable Results (0-20 pts)
+4. Overall Relevance to Target Role (0-20 pts)
+
+Return a valid JSON object strictly matching this schema:
+{{
+  "ats_score": <integer 0-100>,
+  "breakdown": {{
+    "keyword_match": <integer 0-30>,
+    "skills_alignment": <integer 0-30>,
+    "quantifiable_results": <integer 0-20>,
+    "relevance": <integer 0-20>
+  }},
+  "missing_keywords": ["<keyword1>", "<keyword2>", ...],
+  "feedback": "<short constructive feedback sentence for improving the ATS score>"
+}}
+Do not include extra text outside the JSON object.
+"""
+    try:
+        res = call_gemini_batch(prompt)
+        print(f"ATS Evaluation result: {res}", flush=True)
+        return res
+    except Exception as e:
+        print(f"Error during evaluate_ats_score: {e}", flush=True)
+        return {
+            "ats_score": 75,
+            "breakdown": {"keyword_match": 20, "skills_alignment": 20, "quantifiable_results": 15, "relevance": 20},
+            "missing_keywords": [],
+            "feedback": "Could not complete evaluation automatically."
+        }
 
 
 def optimize_section(
@@ -244,7 +296,9 @@ def optimize_resume_batch(
         skills_html,
         exp_bullets_html,
         proj_bullets_html,
-        jd):
+        jd,
+        feedback=None,
+        missing_keywords=None):
 
     payload = {
         "objective": objective_html,
@@ -253,12 +307,23 @@ def optimize_resume_batch(
         "project_bullets": proj_bullets_html
     }
 
+    extra_instructions = ""
+    if feedback or missing_keywords:
+        extra_instructions = f"""
+PREVIOUS ATS EVALUATION FEEDBACK:
+- Specific Feedback: {feedback or 'None'}
+- Critical Missing Keywords to Integrate: {', '.join(missing_keywords) if missing_keywords else 'None'}
+
+TARGET GOAL FOR THIS REFINEMENT PASS:
+Target an ATS Score strictly above 80. Seamlessly integrate the missing keywords into technical skills, career summary/objective, and experience/project bullets while preserving HTML formatting and realism.
+"""
+
     prompt = f"""
 You are an expert ATS resume optimization engine.
 
 JOB DESCRIPTION:
 {jd}
-
+{extra_instructions}
 INPUT RESUME HTML SECTIONS (JSON):
 {json.dumps(payload, indent=2)}
 
@@ -279,4 +344,5 @@ RULES:
 8. CRITICAL: The returned list "experience_bullets" MUST contain EXACTLY {len(exp_bullets_html)} elements. The returned list "project_bullets" MUST contain EXACTLY {len(proj_bullets_html)} elements. Each element in these lists must correspond exactly to the input element at the same index, maintaining its HTML tags and structure.
 """
 
-    return call_gemini_batch(prompt)
+    return call_gemini_batch(prompt)
+

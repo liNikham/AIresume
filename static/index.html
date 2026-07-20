@@ -82,40 +82,40 @@
         <div class="step-item is-pending" data-step="init">
           <div class="step-badge">1</div>
           <div class="step-info">
-            <span class="step-title">Master Resume Extraction</span>
-            <span class="step-detail">Parsing HTML document structure</span>
+            <span class="step-title">Resume Extraction & Audit</span>
+            <span class="step-detail">Parsing document & scoring initial ATS match</span>
           </div>
         </div>
 
-        <div class="step-item is-pending" data-step="objective">
+        <div class="step-item is-pending" data-step="optimization">
           <div class="step-badge">2</div>
           <div class="step-info">
-            <span class="step-title">Career Objective</span>
-            <span class="step-detail">Tailoring summary for role alignment</span>
+            <span class="step-title">Content Optimization Pass</span>
+            <span class="step-detail">Tailoring objective, skills, & bullets</span>
           </div>
         </div>
 
-        <div class="step-item is-pending" data-step="skills">
+        <div class="step-item is-pending" data-step="ats_eval">
           <div class="step-badge">3</div>
           <div class="step-info">
-            <span class="step-title">Technical Skills</span>
-            <span class="step-detail">Injecting relevant keywords & technologies</span>
+            <span class="step-title">ATS Score Evaluation</span>
+            <span class="step-detail">Auditing keyword match against target (>80)</span>
           </div>
         </div>
 
-        <div class="step-item is-pending" data-step="experience">
+        <div class="step-item is-pending" data-step="refinement">
           <div class="step-badge">4</div>
           <div class="step-info">
-            <span class="step-title">Work Experience Bullets</span>
-            <span class="step-detail">Optimizing bullet impact & ATS match</span>
+            <span class="step-title">Iterative Keyword Refinement</span>
+            <span class="step-detail">Integrating missing tech stack & action verbs</span>
           </div>
         </div>
 
-        <div class="step-item is-pending" data-step="projects">
+        <div class="step-item is-pending" data-step="assembly">
           <div class="step-badge">5</div>
           <div class="step-info">
-            <span class="step-title">Project Highlights</span>
-            <span class="step-detail">Refining technical accomplishments</span>
+            <span class="step-title">Document Assembly</span>
+            <span class="step-detail">Reconstructing valid HTML structure</span>
           </div>
         </div>
 
@@ -133,8 +133,40 @@
     <div id="result-view" class="result-card">
       <div class="success-icon-wrap">✓</div>
       <h2 class="result-title">Resume Successfully Optimized!</h2>
-      <p class="result-subtitle">Your customized ATS-tuned resume has been generated and validated.</p>
+      <p class="result-subtitle">Your customized ATS-tuned resume meets recruiter filters and keyword expectations.</p>
       
+      <!-- ATS Score Card -->
+      <div class="ats-score-card">
+        <div class="score-header-row">
+          <div class="score-circle">
+            <span class="score-value" id="res-ats-score">--</span>
+            <span class="score-max">/ 100</span>
+          </div>
+          <div class="score-title-group">
+            <span class="score-card-label">ATS MATCH SCORE</span>
+            <div class="score-status-pill pill-success" id="score-status-pill">
+              <span class="pill-dot"></span>
+              <span id="score-status-text">Target > 80 Achieved</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-meta-grid">
+          <div class="meta-box">
+            <span class="meta-label">Initial Score</span>
+            <span class="meta-val" id="res-initial-score">--</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-label">Score Lift</span>
+            <span class="meta-val text-mint" id="res-score-lift">+0 pts</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-label">Passes Run</span>
+            <span class="meta-val" id="res-iterations">1 pass</span>
+          </div>
+        </div>
+      </div>
+
       <div class="result-actions">
         <div class="result-button-row">
           <a id="download-btn" href="/download" class="btn-primary" download>
@@ -186,7 +218,7 @@
   const previewBtn = document.getElementById('preview-btn');
 
   // Step order index map
-  const stepOrder = ['init', 'objective', 'skills', 'experience', 'projects', 'pdf', 'assembly'];
+  const stepOrder = ['init', 'optimization', 'ats_eval', 'refinement', 'assembly', 'pdf'];
 
   textarea.addEventListener('input', () => {
     const n = textarea.value.length;
@@ -302,6 +334,27 @@
       }
       if (payload.preview_url) {
         previewBtn.href = payload.preview_url + '?t=' + Date.now();
+      }
+
+      // Populate ATS Score UI card
+      const score = payload.ats_score || 0;
+      const initScore = payload.initial_score || 0;
+      const iterations = payload.iterations || 1;
+      const lift = score - initScore;
+
+      document.getElementById('res-ats-score').textContent = score;
+      document.getElementById('res-initial-score').textContent = initScore + ' / 100';
+      document.getElementById('res-score-lift').textContent = (lift >= 0 ? '+' : '') + lift + ' pts';
+      document.getElementById('res-iterations').textContent = iterations + (iterations === 1 ? ' pass' : ' passes');
+
+      const pill = document.getElementById('score-status-pill');
+      const pillText = document.getElementById('score-status-text');
+      if (score > 80) {
+        pill.className = 'score-status-pill pill-success';
+        pillText.textContent = 'Target > 80 Achieved';
+      } else {
+        pill.className = 'score-status-pill pill-warning';
+        pillText.textContent = `Target score > 80 (${score}/100)`;
       }
 
       setTimeout(() => {

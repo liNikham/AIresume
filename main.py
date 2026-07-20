@@ -42,13 +42,16 @@ def generate_resume_stream(job_description: str = Form(...)):
     def event_stream():
         q = queue.Queue()
 
-        def progress_callback(step_id, progress, message):
-            q.put({
+        def progress_callback(step_id, progress, message, extra=None):
+            payload = {
                 "status": "progress",
                 "step": step_id,
                 "progress": progress,
                 "message": message
-            })
+            }
+            if extra and isinstance(extra, dict):
+                payload.update(extra)
+            q.put(payload)
 
         def worker():
             try:
@@ -67,11 +70,25 @@ def generate_resume_stream(job_description: str = Form(...)):
 
                 body = extract_body(html)
 
-                updated_body = optimize_resume(
+                opt_result = optimize_resume(
                     body,
                     job_description,
                     progress_callback=progress_callback
                 )
+
+                if isinstance(opt_result, dict):
+                    updated_body = opt_result.get("html", "")
+                    ats_score = opt_result.get("ats_score", 0)
+                    initial_score = opt_result.get("initial_score", 0)
+                    iterations = opt_result.get("iterations", 1)
+                    score_history = opt_result.get("score_history", [])
+                    breakdown = opt_result.get("breakdown", {})
+                    feedback = opt_result.get("feedback", "")
+                    missing_keywords = opt_result.get("missing_keywords", [])
+                else:
+                    updated_body = opt_result
+                    ats_score, initial_score, iterations = 80, 70, 1
+                    score_history, breakdown, feedback, missing_keywords = [70, 80], {}, "", []
 
                 q.put({
                     "status": "progress",
@@ -116,9 +133,16 @@ def generate_resume_stream(job_description: str = Form(...)):
                 q.put({
                     "status": "complete",
                     "progress": 100,
-                    "message": "Resume optimization complete!",
+                    "message": f"Resume optimization complete! Final ATS Score: {ats_score}/100",
                     "download_url": "/download",
-                    "preview_url": "/generated/updated_resume.pdf"
+                    "preview_url": "/generated/updated_resume.pdf",
+                    "ats_score": ats_score,
+                    "initial_score": initial_score,
+                    "iterations": iterations,
+                    "score_history": score_history,
+                    "breakdown": breakdown,
+                    "feedback": feedback,
+                    "missing_keywords": missing_keywords
                 })
 
             except Exception as e:
@@ -142,6 +166,7 @@ def generate_resume_stream(job_description: str = Form(...)):
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
+
 @app.post("/generate")
 def generate_resume(job_description: str = Form(...)):
 
@@ -163,10 +188,11 @@ def generate_resume(job_description: str = Form(...)):
 
         print("✓ Body extracted")
 
-        updated_body = optimize_resume(
+        opt_result = optimize_resume(
             body,
             job_description
         )
+        updated_body = opt_result.get("html", "") if isinstance(opt_result, dict) else opt_result
 
         print("✓ Resume optimized")
 

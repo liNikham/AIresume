@@ -24,62 +24,306 @@
     <header class="card-header">
       <p class="eyebrow"><span class="dot"></span>ATS OPTIMIZATION ENGINE</p>
       <h1>Resume <span class="accent">AI</span></h1>
-      <p class="subtitle">Paste a job description. Get a resume tuned to pass the parser and land on a recruiter's desk.</p>
+      <p class="subtitle">Paste a target job description. Get a customized resume tuned to bypass ATS filters and land recruiter interviews.</p>
     </header>
 
-    <form action="/generate" method="post" id="resume-form">
+    <!-- State 1: Input Form View -->
+    <div id="input-view">
+      <form id="resume-form" action="/generate" method="post">
 
-      <div class="field">
-        <div class="field-label-row">
-          <label for="job_description">Job description</label>
-          <span class="char-count" id="char-count">0 characters</span>
+        <div class="field">
+          <div class="field-label-row">
+            <label for="job_description">Job description</label>
+            <span class="char-count" id="char-count">0 characters</span>
+          </div>
+
+          <div class="scan-bed">
+            <textarea
+              id="job_description"
+              name="job_description"
+              placeholder="Paste the full target job description here — responsibilities, key skills, tech stack, and qualifications..."
+              required
+            ></textarea>
+            <div class="scan-line" aria-hidden="true"></div>
+          </div>
         </div>
 
-        <div class="scan-bed">
-          <textarea
-            id="job_description"
-            name="job_description"
-            placeholder="Paste the full job description here — responsibilities, requirements, keywords. The more context, the sharper the match."
-            required
-          ></textarea>
-          <div class="scan-line" aria-hidden="true"></div>
+        <button type="submit" id="generate-btn" class="btn-primary">
+          <span class="btn-label">Optimize Resume Now</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+
+        <div class="feature-row">
+          <span class="chip"><span class="chip-dot chip-dot--mint"></span>Keyword Alignment</span>
+          <span class="chip"><span class="chip-dot chip-dot--indigo"></span>ATS Safe Format</span>
+          <span class="chip"><span class="chip-dot chip-dot--cyan"></span>PDF Hyperlink Retention</span>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- State 2: Real-time Progress Pipeline View -->
+    <div id="progress-view" class="progress-card">
+      <div class="progress-header">
+        <div class="progress-title-wrap">
+          <p class="progress-headline">Optimizing Resume</p>
+          <p class="progress-subtext" id="progress-message">Initializing optimization engine...</p>
+        </div>
+        <div class="progress-percentage" id="progress-percent">0%</div>
+      </div>
+
+      <div class="progress-track-wrapper">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill"></div>
         </div>
       </div>
 
-      <button type="submit" id="generate-btn">
-        <span class="btn-label">Generate Resume</span>
-        <span class="btn-icon" aria-hidden="true">→</span>
-      </button>
+      <div class="timeline" id="timeline-list">
+        <div class="step-item is-pending" data-step="init">
+          <div class="step-badge">1</div>
+          <div class="step-info">
+            <span class="step-title">Master Resume Extraction</span>
+            <span class="step-detail">Parsing HTML document structure</span>
+          </div>
+        </div>
 
-      <div class="feature-row">
-        <span class="chip"><span class="chip-dot chip-dot--mint"></span>Keyword matched</span>
-        <span class="chip"><span class="chip-dot chip-dot--indigo"></span>ATS-safe formatting</span>
-        <span class="chip"><span class="chip-dot chip-dot--amber"></span>Ready in seconds</span>
+        <div class="step-item is-pending" data-step="objective">
+          <div class="step-badge">2</div>
+          <div class="step-info">
+            <span class="step-title">Career Objective</span>
+            <span class="step-detail">Tailoring summary for role alignment</span>
+          </div>
+        </div>
+
+        <div class="step-item is-pending" data-step="skills">
+          <div class="step-badge">3</div>
+          <div class="step-info">
+            <span class="step-title">Technical Skills</span>
+            <span class="step-detail">Injecting relevant keywords & technologies</span>
+          </div>
+        </div>
+
+        <div class="step-item is-pending" data-step="experience">
+          <div class="step-badge">4</div>
+          <div class="step-info">
+            <span class="step-title">Work Experience Bullets</span>
+            <span class="step-detail">Optimizing bullet impact & ATS match</span>
+          </div>
+        </div>
+
+        <div class="step-item is-pending" data-step="projects">
+          <div class="step-badge">5</div>
+          <div class="step-info">
+            <span class="step-title">Project Highlights</span>
+            <span class="step-detail">Refining technical accomplishments</span>
+          </div>
+        </div>
+
+        <div class="step-item is-pending" data-step="pdf">
+          <div class="step-badge">6</div>
+          <div class="step-info">
+            <span class="step-title">PDF Rendering & Hyperlinks</span>
+            <span class="step-detail">Compiling PDF & calibrating links</span>
+          </div>
+        </div>
       </div>
+    </div>
 
-    </form>
+    <!-- State 3: Completion Result View -->
+    <div id="result-view" class="result-card">
+      <div class="success-icon-wrap">✓</div>
+      <h2 class="result-title">Resume Successfully Optimized!</h2>
+      <p class="result-subtitle">Your customized ATS-tuned resume has been generated and validated.</p>
+      
+      <div class="result-actions">
+        <div class="result-button-row">
+          <a id="download-btn" href="/download" class="btn-primary" download>
+            <span>Download PDF</span>
+            <span>↓</span>
+          </a>
+          <a id="preview-btn" href="/generated/updated_resume.pdf" target="_blank" class="btn-secondary">
+            <span>Preview Resume</span>
+            <span>↗</span>
+          </a>
+        </div>
+        <button id="reset-btn" class="btn-outline" type="button">
+          Optimize Another Job Description
+        </button>
+      </div>
+    </div>
+
+    <!-- State 4: Error View -->
+    <div id="error-view" class="error-card">
+      <h3>Optimization Encountered an Issue</h3>
+      <p class="error-message" id="error-text">An unknown error occurred during generation.</p>
+      <button id="retry-btn" class="btn-secondary" type="button">Try Again</button>
+    </div>
 
   </div>
 
-  <p class="footnote">Nothing leaves this page until you hit generate.</p>
+  <p class="footnote">Resume AI • Private & local ATS parsing engine</p>
 </div>
 
 <script>
   const textarea = document.getElementById('job_description');
   const charCount = document.getElementById('char-count');
   const form = document.getElementById('resume-form');
-  const btn = document.getElementById('generate-btn');
+
+  const inputView = document.getElementById('input-view');
+  const progressView = document.getElementById('progress-view');
+  const resultView = document.getElementById('result-view');
+  const errorView = document.getElementById('error-view');
+
+  const progressPercent = document.getElementById('progress-percent');
+  const progressFill = document.getElementById('progress-fill');
+  const progressMessage = document.getElementById('progress-message');
+  const timelineItems = document.querySelectorAll('.step-item');
+  const errorText = document.getElementById('error-text');
+
+  const resetBtn = document.getElementById('reset-btn');
+  const retryBtn = document.getElementById('retry-btn');
+  const downloadBtn = document.getElementById('download-btn');
+  const previewBtn = document.getElementById('preview-btn');
+
+  // Step order index map
+  const stepOrder = ['init', 'objective', 'skills', 'experience', 'projects', 'pdf', 'assembly'];
 
   textarea.addEventListener('input', () => {
     const n = textarea.value.length;
     charCount.textContent = n === 1 ? '1 character' : n.toLocaleString() + ' characters';
   });
 
-  form.addEventListener('submit', () => {
-    btn.classList.add('is-loading');
-    btn.querySelector('.btn-label').textContent = 'Scanning job description…';
-    btn.disabled = true;
+  function resetTimeline() {
+    timelineItems.forEach(item => {
+      item.className = 'step-item is-pending';
+    });
+    progressFill.style.width = '0%';
+    progressPercent.textContent = '0%';
+    progressMessage.textContent = 'Initializing optimization engine...';
+  }
+
+  function setStepState(activeStepId) {
+    let activeIdx = stepOrder.indexOf(activeStepId);
+    if (activeIdx === -1) activeIdx = 0;
+
+    timelineItems.forEach((item) => {
+      const stepId = item.getAttribute('data-step');
+      const itemIdx = stepOrder.indexOf(stepId);
+
+      if (itemIdx < activeIdx) {
+        item.className = 'step-item is-complete';
+      } else if (itemIdx === activeIdx) {
+        item.className = 'step-item is-active';
+      } else {
+        item.className = 'step-item is-pending';
+      }
+    });
+  }
+
+  function markAllStepsComplete() {
+    timelineItems.forEach(item => {
+      item.className = 'step-item is-complete';
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const jdText = textarea.value.trim();
+    if (!jdText) return;
+
+    inputView.style.display = 'none';
+    resultView.style.display = 'none';
+    errorView.style.display = 'none';
+    progressView.style.display = 'flex';
+
+    resetTimeline();
+
+    try {
+      const response = await fetch('/generate-stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ job_description: jdText })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned status ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // keep last incomplete line
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('data: ')) {
+            const dataStr = trimmed.slice(6);
+            try {
+              const payload = JSON.parse(dataStr);
+              handleStreamPayload(payload);
+            } catch (err) {
+              console.error('Failed to parse SSE line:', err);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Stream error:', err);
+      progressView.style.display = 'none';
+      errorView.style.display = 'flex';
+      errorText.textContent = err.message || 'An error occurred during resume optimization.';
+    }
   });
+
+  function handleStreamPayload(payload) {
+    if (payload.status === 'progress') {
+      const { step, progress, message } = payload;
+      progressFill.style.width = progress + '%';
+      progressPercent.textContent = progress + '%';
+      if (message) progressMessage.textContent = message;
+      if (step) setStepState(step);
+    } else if (payload.status === 'complete') {
+      progressFill.style.width = '100%';
+      progressPercent.textContent = '100%';
+      progressMessage.textContent = 'Optimization Complete!';
+      markAllStepsComplete();
+
+      if (payload.download_url) {
+        downloadBtn.href = payload.download_url;
+      }
+      if (payload.preview_url) {
+        previewBtn.href = payload.preview_url;
+      }
+
+      setTimeout(() => {
+        progressView.style.display = 'none';
+        resultView.style.display = 'flex';
+      }, 500);
+    } else if (payload.status === 'error') {
+      progressView.style.display = 'none';
+      errorView.style.display = 'flex';
+      errorText.textContent = payload.message || 'An unexpected error occurred.';
+    }
+  }
+
+  function resetToInput() {
+    resultView.style.display = 'none';
+    errorView.style.display = 'none';
+    progressView.style.display = 'none';
+    inputView.style.display = 'block';
+  }
+
+  resetBtn.addEventListener('click', resetToInput);
+  retryBtn.addEventListener('click', resetToInput);
 </script>
 
 </body>

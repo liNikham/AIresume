@@ -27,7 +27,18 @@ from validator import (
 
 def optimize_resume(
         html,
-        jd):
+        jd,
+        progress_callback=None):
+
+    def emit(step_id, progress, message):
+        if progress_callback:
+            try:
+                progress_callback(step_id, progress, message)
+            except Exception as err:
+                print(f"Progress callback error: {err}")
+
+    emit("objective", 15, "Optimizing Career Objective...")
+
 
     print("\n====================")
     print("OBJECTIVE")
@@ -73,6 +84,8 @@ def optimize_resume(
         print(
             "Skipping Objective"
         )
+
+    emit("skills", 35, "Aligning Skills & ATS Keywords...")
 
     print("\n====================")
     print("SKILLS")
@@ -127,8 +140,13 @@ def optimize_resume(
     print("EXPERIENCE")
     print("====================")
 
+    total_exp = len(experience) if len(experience) > 0 else 1
+
     for idx, bullet in enumerate(
             experience):
+
+        prog = 35 + int(((idx + 1) / total_exp) * 30)
+        emit("experience", prog, f"Tuning Experience Bullet {idx+1}/{total_exp}...")
 
         print(
             f"Optimizing Experience Bullet {idx+1}"
@@ -178,8 +196,13 @@ def optimize_resume(
     print("PROJECTS")
     print("====================")
 
+    total_proj = len(projects) if len(projects) > 0 else 1
+
     for idx, bullet in enumerate(
             projects):
+
+        prog = 65 + int(((idx + 1) / total_proj) * 25)
+        emit("projects", prog, f"Refining Project Bullet {idx+1}/{total_proj}...")
 
         print(
             f"Optimizing Project Bullet {idx+1}"
@@ -227,4 +250,5 @@ def optimize_resume(
             print("\nGENERATED\n")
             print(updated)
 
+    emit("assembly", 90, "Reconstructing HTML structure...")
     return html
